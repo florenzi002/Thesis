@@ -1,0 +1,17 @@
+\BOOKMARK [0][-]{chapter.1}{Semantic Web}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Introduction to the Semantic Web}{chapter.1}% 2
+\BOOKMARK [2][-]{subsection.1.1.1}{Linked data}{section.1.1}% 3
+\BOOKMARK [2][-]{subsection.1.1.2}{Vocabularies}{section.1.1}% 4
+\BOOKMARK [2][-]{subsection.1.1.3}{Query}{section.1.1}% 5
+\BOOKMARK [1][-]{section.1.2}{Brick}{chapter.1}% 6
+\BOOKMARK [1][-]{section.1.3}{Semantic Sensor Network ontology}{chapter.1}% 7
+\BOOKMARK [0][-]{chapter.2}{Model creation}{}% 8
+\BOOKMARK [1][-]{section.2.1}{State of the art}{chapter.2}% 9
+\BOOKMARK [2][-]{subsection.2.1.1}{Physycal model approach}{section.2.1}% 10
+\BOOKMARK [2][-]{subsection.2.1.2}{Data driven approach}{section.2.1}% 11
+\BOOKMARK [2][-]{subsection.2.1.3}{Rule-based approach}{section.2.1}% 12
+\BOOKMARK [1][-]{section.2.2}{IBM Research approach}{chapter.2}% 13
+\BOOKMARK [0][-]{chapter.3}{Diagnosis Algorithm}{}% 14
+\BOOKMARK [0][-]{chapter.4}{Implementation details}{}% 15
+\BOOKMARK [1][-]{section.4.1}{IoT BRAIN and KITT}{chapter.4}% 16
+\BOOKMARK [2][-]{subsection.4.1.1}{Graph database vs. RDF Store}{section.4.1}% 17
