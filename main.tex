@@ -1,0 +1,23 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{setspace}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage[backend=biber]{biblatex}
+\addbibresource{references.bib}
+\usepackage{geometry}
+
+\begin{document}
+\input{chapters/titlepage}
+\onehalfspace
+\tableofcontents
+\input{chapters/introduction}
+\input{chapters/chapter1}
+\input{chapters/chapter2}
+\input{chapters/chapter3}
+\input{chapters/chapter4}
+\printbibliography
+\end{document}
