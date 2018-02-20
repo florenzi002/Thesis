@@ -4,7 +4,13 @@
 This chapter will outline the approach suggested by IBM Reserch for tackling the challange introduced in \textbf{\nameref{ch:introduction}} regarding fault detection and diagnosis (FDD). %TODO
 
 \section{State of the art}
-Nowadays, as extensively analyzed by \textcite{methods_for_diagnostic}, FDD approaches fall in either one of the following three categories: physycal model based approaches, data driven approaches and rule-based approaches. The rationales behind these approaches are detailed in \autoref{subsec:phy_models}, \autoref{subsec:data_models} and in \autoref{subsec:rule_models}.
+Nowadays, as extensively analyzed by \textcite{methods_for_diagnostic}, FDD approaches fall in either one of the following three categories: physycal model based approaches, data driven approaches and rule-based approaches. The rationales behind these approaches are detailed in \autoref{subsec:phy_models}, \autoref{subsec:data_models} and in \autoref{subsec:rule_models}. Still, each of these approaches share common limitations that can be summarized as
+\begin{itemize}
+  \item they can be applied to a single, specific building
+  \item they requires large manual effort and expertise
+  \item deploy can take several weeks
+  \item they neglect strong interactions between systems
+\end{itemize}
 
 \subsection{Physycal model approach} \label{subsec:phy_models}
 These approaches require a physycal model (e.g ordinary differential equations) of the building and its components. They are highly precise in diagnosing faults given a correct model, however, deriving the models is no trivial task and requires times and expertise. On top of this, derived models are building, system and location specific and are difficult to adapt to other buildings than the one they are thought for even if they share similar structure and similar components, thus limiting the scalability of this approach.
@@ -15,17 +21,8 @@ Data driven approaches completely rely on building's sensor data. They assume th
 \subsection{Rule-based approach} \label{subsec:rule_models}
 The rule-based approach is the most common in traditional FDD applications. It uses domain knowledge and expertise in order to derive a series of simple \textit{if-then-else} rules or some kind of decision trees along with a series of thresholds and confidence intervals; during system operations data are evaluated against this rules and countermeasures are eventually taken. Even though this is the most common approach, it still needs a lot of manual effort and requires access to domain knowledge so these requirements still limit portability and scalability of applications based on this technique.
 
-All of these approaches share common limitations that can be summarized as
-\begin{itemize}
-  \item they can be applied to a single, specific building
-  \item they requires large manual effort and expertise
-  \item deploy can take several weeks
-  \item they neglect strong interactions between systems
-\end{itemize}
-
 \section{IBM Research approach}
-The approach developed by IBM Research is based on a combination of the three aformentioned concepts to overcome their disadvantages. It models high level \textbf{physical processes} in the systems to derive diagnosis \textbf{rules}, it parametrize the rules using \textbf{data analytics} techniques and applies them during systmes operations. The strength of the semantic approach lies in its capability to automatically infer knowledge given a building, its sensors and their data. This lead to a semi-automated process that limit the manual effort needed as shown in \ref{fig:approach_overview}.
-
+The approach developed by IBM Research is based on a combination of the three aformentioned concepts to overcome their disadvantages. It models high level physical processes in the systems to derive diagnosis rules, it parametrize the rules using data analytics techniques and applies them during systmes operations. The strength of the semantic approach lies in its capability to automatically infer knowledge given a building, its sensors and their data. This lead to a semi-automated process that limit the manual effort needed as shown in \autoref{fig:approach_overview}.
 \begin{figure}
   \centering
   \includegraphics[width=0.7\textwidth]{approach_overview.pdf}
@@ -35,7 +32,12 @@ The approach developed by IBM Research is based on a combination of the three af
 
 The proposed approach needs 3 inputs to produce the diagnosis of a given anomaly
 \begin{itemize}
-  \item building data: assumed available in the building's Building Management System (BMS).
-  \item semantic model: specified through the use of domain ontologies Brick e SSNO.
-  \item physycal model: the model of the physical dependencies between subsystems of the building. The physical processes are modelled as LTI processes described in the extended SSNO.
+  \item building data: assumed available in the building's Building Management System (BMS)
+  \item semantic model: specified through the use of concepts from domain ontologies Brick (\autoref{subsec:brick}) e SSNO (\autoref{subsec:ssn})
+  \item physycal model: the model of the physical dependencies between subsystems of the building. The physical processes are modelled through concepts presented in the extended SSNO (\autoref{ssubsec:extended_ssno})
 \end{itemize}
+
+these inputs are processed through the various stages to produce the complete model of the building and its internal processes. Details about the different phases are given in the following pages.
+
+\subsection{Semantic Mapping}
+Building a semantic model for a specific building needs knowledge on the type of sensors, meters and various equipment available in said building, their location and their semantic meaning in the chosen ontologies. These informations are usually stored in BMS through labels that, despite some kind of standardization efforts, are usually vendor specific; in some cases even the same vendor ends up changing its labeling schemes throughout the years. Even though there is no common ground to evaluate these labels, usually they are comprised of a series of abbreviations, eventually separated by some special character (e.g ``\textunderscore''), that gives informations about the device's ID, function and location (or the equipment it is part of). An air temperature sensor in a room at ground floor can be labeled AIR\textunderscore TEMP\textunderscore R3GF while another air temperature sensor in a room at the second floor may ends up being labeled as RATS1FR9.

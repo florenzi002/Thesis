@@ -84,13 +84,40 @@ A mean for querying RDF models is defined by SPARQL \cite{sparql_reccomendation}
 
 \section{Ontologies for smart buildings}
 \subsection{Brick} \label{subsec:brick}
-Brick schema defines domain specific concepts aimed at describing sensors in a building with its context. It is composed of three parts
+Brick schema \cite{brick_schema} defines domain specific concepts aimed at describing sensors in a building with its context. It is composed of three parts
 \begin{itemize}
   \item a class hierarchy of entities describing various building subsystems
   \item a minimal set of relationships for connecting entities
   \item a methods for encapsulation in the form of Function Blocks
 \end{itemize}
 
-the main concept in Brick is the concept of \textit{tag} introduced with project Haystack \cite{project_haystack}, which is enriched with an ontology that cristallizes the concepts defined by tags. In Brick tags are grouped together as sets, named \textit{tagset}, to represent entities.
+the main concept in Brick is the concept of tag introduced with project Haystack \cite{project_haystack}, which is further enriched by an ontology that cristallizes the concepts defined by tags. A tag is a flexible framework for annotating metadata to building data points. In Brick tags are grouped together as sets, named tagset, to represent entities; the tags {room}, {temperature} and {sensor} can be grouped together as {room temperature sensor} representing a single entity. The concept of tagset is well integrated with the class hierarchy concept of the ontologies: a {room temperature sensor} is a subclass of a generic {temperature sensor}.
+As the main goal of Brick is to represent points in a building's BMS, Points is one of the main classes of Brick, which subclasses define specific type of points like Sensor. The most common concepts a Point can be related to are Location, Equipement and Measurement so those classes, together with the Point class, form the core classes of Brick. Those classes are further subclassed to form a hierarchy able to comprehend every entity of a building. Alongside classes, relationships play a crucial role in connecting entities and thus providing a context for many applications. Brick designed a set of minimal, intuitive and multipurpose relationship fundamental in capturing existing relationship. \autoref{fig:brick_schema} shows the Brick core concepts and the designed set of relationships.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{brick_schema.pdf}
+  \caption{Brick schema core concepts}
+  \label{fig:brick_schema}
+\end{figure}
 
 \subsection{Semantic Sensor Network ontology} \label{subsec:ssn}
+While Brick schema was used to model the building domain, the Semantic Sensor Network (SSN) ontology \cite{ssn_ontology} was chosen because it provides a different view of the various aspect of the sensing process, beyond the specific building domain. Peculiar to the SNN Ontology (SSNO) is the Stimulus-Sensor-Observation design pattern.
+This pattern differentiate between the concept of ssn:Sensor for physical devices that take measurements in form of ssn:Observation and ssn:Stimulus that is the actual change in the enviroment that caused a particular observation, so that it possible to differentiate that stimuli occur in the reality even if no sensor is monitoring them, thus modeling unobservabel states of a system, and that observation made from a sensor can be different from the real event (e.g errors, failures, noise ). These concepts aside, SSN provide other useful classes that are ssn:FeatureOfInterest that represent generic entities which status is to be monitored, like rooms, fans or floors and ssn:Property that embodies specific physical quantities that a sensor ought to monitor. All the classes are connected by a set of relationships that are ssn:hasProperty that connects a ssn:FeatureOfInterest with meaningful physical properties, like a temperature in a room; ssn:isProxyFor represent that a given ssn:Stimulus influence a ssn:Property as in ``another occupant in a room raises its temperature''; ssn:includeEvent create a dependency between an observation and a event that causes it; ssn:observedBy links an observation to the sensor that could measure it. \autoref{fig:ssn_ontology} show the resulting SSN ontology.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1\textwidth]{ssn_ontology.pdf}
+  \caption{Semantic Sensor Network (simplified) ontology}
+  \label{fig:ssn_ontology}
+\end{figure}
+
+\subsubsection{Extending SSNO} \label{ssubsec:extended_ssno}
+As far as it goes Brick and SSN are good ontologies for modeling a building and its sensor network, but in a Energy Management System (EMS) context, and for FDD applications in particular, it is essential to understand the cause-effect relationships in the building. In order to to that, IBM Research extended the SSNO through the introduction of additional classes and references as in \autoref{fig:extended_ssno}. phy:PhysicalProcess represents laws of physics through a simplified model. Different subclasses of physical processes are derived from LTI system processes and will be described in . % TODO later chapter
+phy:FeatureLink tells which kind of relationship exist between two ssn:FeatureOfInterest, such a link could be a wall between two rooms or a window between a room and the outside. phy:Cause and phy:Effect are subclasses of ssn:Stimulus useful for differentiate whether said stimulus is a cause or an effect of a ssn:Observation. phy:Anomaly is a subclass of ssn:Observation, it describes out-of-range observations that need to be diagnosed, like a high temperature in a room. phy:ObservedCause is still a subclass of ssn:Observation; it is used for describing a measurment that can be a cause of an anomaly.
+
+\begin{figure}
+  \includegraphics[width=1\textwidth]{extended_ssno.pdf}
+  \caption{Extended SSN ontology. Extensions are highlighted with bold line and a light grey background.}
+  \label{fig:extended_ssno}
+\end{figure}
