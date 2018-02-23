@@ -162,4 +162,48 @@ through the semantic mapping tool (\ref{subsec:semantic_mapping}) it is possible
 \end{figure}
 
 \paragraph{Physic model}
-The physic model is a model of the physic phenomena occuring in an enviroment. It defines physical variable and processes and their interaction in the context of a specific domain. Creating a model of physic laws is a time consuming task that involve expertise from different fields, from engineering to physics, that are very domain specific. The good side of the semantic approach is that once the model is derived from a general point of view, it is automatically extended for every instance of a building, indipendently from its architecture. It is to note that the domain model for the physic does not necessarily model exact physical relationship but just the principal ones, since those are the most relevant to the approach, however this choice is purely paractical rather then a limitation of the approach itself and given sufficient time and knowledge it is possible to enrich the model in order to close the gap with the reality. Here will be presented a model for the physic of a room, equipped with a AHU fed by a chiller. The model is based on a simplification based on the assumption of fully mixed air, that allows for the modeling of a whole closed space as a single node with uniform temperature. 
+The physic model is a model of the physic phenomena occuring in an enviroment. It defines physical variable and processes and their interaction in the context of a specific domain. Creating a model of physic laws is a time consuming task that involve expertise from different fields, from engineering to physics, that are very domain specific. The good side of the semantic approach is that once the model is derived from a general point of view, it is automatically extended for every instance of a building, indipendently from its architecture. It is to note that the domain model for the physic does not necessarily model exact physical relationship but just the principal ones, since those are the most relevant to the approach, however this choice is purely paractical rather then a limitation of the approach itself and given sufficient time and knowledge it is possible to enrich the model in order to close the gap with the reality. Here will be presented a model for the physic of a room, equipped with a AHU fed by a chiller. The model is based on a simplification based on the assumption of fully mixed air, that allows for the modeling of a whole space as a single node with uniform temperature. \textcite{building_room_physics} provide an insight of the physic involved in the example. It starts describing a heat balance equation of a room as
+\begin{gather}
+  m_rc_p\dot{\vartheta_{r}}=Q_{Energy}\label{eq:room_variables}\\
+  Q_{Energy}=Q_{Occ}+Q_{Cool}+\sum{A_ih_i(\vartheta_{i}-\vartheta_{r})}\label{eq:energy_composition}\\
+\end{gather}
+
+and from \autoref{eq:room_variables} and \autoref{eq:energy_composition}
+\begin{equation}
+  m_rc_p\dot{\vartheta_{r}}+\sum{A_ih_i\vartheta_{r}}=Q_{Occ}+Q_{Cool}+\sum{A_ih_i\vartheta_{i}} \label{eq:room_lag}
+\end{equation}
+
+that says that the temperature of a room $\vartheta_r$ is a first order derivative of the room's inner energy $Q_{Energy}$ that is the combination of the heat gain of occupants $Q_{Occ}$, the heat removed by the cooling system $Q_{Cool}$ and the heat transfer between adjacent environments. Given this equations semantic informations can be extracted.
+From \autoref{eq:room_variables} it can be seen that
+\begin{enumerate}[noitemsep]
+  \item rooms have an internal energy [Property, mandatory]
+  \item rooms have a temperature [Property, mandatory]
+\end{enumerate}
+while from \autoref{eq:energy_composition} it follows that
+\begin{enumerate}[noitemsep, resume]
+  \item a room's temperature is influenced by the energy in a first order lag process [Process, PT1]
+  \item rooms can be cooled and cooling is negative proportional (NP) with the room's energy
+  \item room energy depends from the adjacents enviroment's temperature proportional to the shared surface $A_i$ and the heat transfer coefficient $h_i$, hence the dependency is a positive proportional process [Process, PP]
+\end{enumerate}
+further analyzing the physic involved, bring to the conclusion that
+\begin{equation}
+  Q_{Occ}=q_{lat}n_{occ} \label{eq:occupancy_heat}
+\end{equation}
+where $q_{lat}$ is the latent heat gain and $n_{occ}$ the number of occupants in the room. From  \autoref{eq:energy_composition} and \ref{eq:occupancy_heat} it follows that
+\begin{enumerate}[noitemsep, resume]
+  \item rooms have a number of occupants [Property, Mandatory]
+  \item a room's internal energy is positively correlated with the number of occupants [Process, PP]
+\end{enumerate}
+additional knowledge can be added if the physics of the system in known; for example, it is possible to further enrich the model by specifying the internal processes that regulate a AHU. \textcite{building_ahu_physics} provide a simplified model for modelling the cooling load of an AHU through \autoref{eq:cooling_load}
+\begin{equation}
+  Q_{Cool}=\frac{c_a\dot{m_{a}^{e}}c_c\dot{m_{c}^{e}}}{c_{a}\dot{m_{a}^{e}}+c_c\dot{m_{c}^{e}}}(\vartheta_{a}-\vartheta_{c}) \label{eq:cooling_load}
+\end{equation}
+this leads to the following conclusions
+\begin{enumerate}[noitemsep, resume]
+  \item AHUs are used for cooling [Poperty, mandatory]
+  \item cooling is a complex function of the air temperature, the chilled water temperature, the supply air flow and the water flow in the coil [Process, MISO]
+\end{enumerate}
+\textcite{building_chiller_physics} provide a simple model of a chiller's physic, which equation can be expressed as
+\begin{equation}
+  \dot{m_c}c_w(\vartheta_{cret}-\vartheta_c)=\eta_{COP}W
+\end{equation}
