@@ -92,7 +92,13 @@ Brick schema \cite{brick_schema} defines domain specific concepts aimed at descr
 \end{itemize}
 
 the main concept in Brick is the concept of tag introduced with project Haystack \cite{project_haystack}, which is further enriched by an ontology that cristallizes the concepts defined by tags. A tag is a flexible framework for annotating metadata to building data points. In Brick tags are grouped together as sets, named tagset, to represent entities; the tags {room}, {temperature} and {sensor} can be grouped together as {room temperature sensor} representing a single entity. The concept of tagset is well integrated with the class hierarchy concept of the ontologies: a {room temperature sensor} is a subclass of a generic {temperature sensor}.
-As the main goal of Brick is to represent points in a building's BMS, Points is one of the main classes of Brick, which subclasses define specific type of points like Sensor. The most common concepts a Point can be related to are Location, Equipement and Measurement so those classes, together with the Point class, form the core classes of Brick. Those classes are further subclassed to form a hierarchy % TODO example hierarchy
+As the main goal of Brick is to represent points in a building's BMS, Points is one of the main classes of Brick, which subclasses define specific type of points like Sensor. The most common concepts a Point can be related to are Location, Equipement and Measurement so those classes, together with the Point class, form the core classes of Brick. Those classes are further subclassed to form a hierarchy. A subset of the hierarchy is shown, as example, in \autoref{fig:brick_hierarchy}.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{brick_hierarchy.pdf}
+  \caption{Subset of Brick hierarchy}
+  \label{fig:brick_hierarchy}
+\end{figure}
 able to comprehend every entity of a building. Alongside classes, relationships play a crucial role in connecting entities and thus providing a context for many applications. Brick designed a set of minimal, intuitive and multipurpose relationship fundamental in capturing existing relationship. \autoref{fig:brick_schema} shows the Brick core concepts and the designed set of relationships.
 
 \begin{figure}
@@ -114,7 +120,7 @@ This pattern differentiate between the concept of ssn:Sensor for physical device
 \end{figure}
 
 \subsubsection{Extending SSNO} \label{ssubsec:extended_ssno}
-As far as it goes Brick and SSN are good ontologies for modeling a building and its sensor network, but in a Energy Management System (EMS) context, and for FDD applications in particular, it is essential to understand the cause-effect relationships in the building. In order to to that, IBM Research extended the SSNO through the introduction of additional classes and references as in \autoref{fig:extended_ssno}. phy:PhysicalProcess represents laws of physics through a simplified model. Different subclasses of physical processes are derived from LTI system processes and will be described in . % TODO later chapter
+As far as it goes Brick and SSN are good ontologies for modeling a building and its sensor network, but in a Energy Management System (EMS) context, and for FDD applications in particular, it is essential to understand the cause-effect relationships in the building. In order to to that, IBM Research extended the SSNO through the introduction of additional classes and references as in \autoref{fig:extended_ssno}. phy:PhysicalProcess represents laws of physics through a simplified model. Different subclasses of physical processes are derived from LTI system processes and will be described in \autoref{ch:model}.
 phy:FeatureLink tells which kind of relationship exist between two ssn:FeatureOfInterest, such a link could be a wall between two rooms or a window between a room and the outside. phy:Cause and phy:Effect are subclasses of ssn:Stimulus useful for differentiate whether said stimulus is a cause or an effect of a ssn:Observation. phy:Anomaly is a subclass of ssn:Observation, it describes out-of-range observations that need to be diagnosed, like a high temperature in a room. phy:ObservedCause is still a subclass of ssn:Observation; it is used for describing a measurment that can be a cause of an anomaly.
 
 \begin{figure}

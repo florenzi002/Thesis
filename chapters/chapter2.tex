@@ -13,13 +13,13 @@ Nowadays, as extensively analyzed by \textcite{methods_for_diagnostic}, FDD appr
   \item they neglect strong interactions between systems
 \end{itemize}
 
-\subsection{Physycal model approach} \label{subsec:phy_models}
+\paragraph{Physycal model approach} \label{subsec:phy_models}
 These approaches require a physycal model (e.g ordinary differential equations) of the building and its components. They are highly precise in diagnosing faults given a correct model, however, deriving the models is no trivial task and requires times and expertise. On top of this, derived models are building, system and location specific and are difficult to adapt to other buildings than the one they are thought for even if they share similar structure and similar components, thus limiting the scalability of this approach.
 
-\subsection{Data driven approach} \label{subsec:data_models}
+\paragraph{Data driven approach} \label{subsec:data_models}
 Data driven approaches completely rely on building's sensor data. They assume that access to a large dataset of hystorical data is granted. There's little to no need for any \textit{a priori} knowledge of the processes involved. Black-box data driven approaches derive the model in the form of a input-output relationship which parameters aren't correlated with the actual physical parameter (e.g artificial neural networks, regression) while grey-box data driven approaches take advantage of simplified physical relationships between measured quantities (e.g principal component analysys) and rely on statistical methods for estimating their parameters. Even though these methods don't suffer from scalability issues they are limited to fault detection and lack in diagnosis capabilities.
 
-\subsection{Rule-based approach} \label{subsec:rule_models}
+\paragraph{Rule-based approach} \label{subsec:rule_models}
 The rule-based approach is the most common in traditional FDD applications. It uses domain knowledge and expertise in order to derive a series of simple \textit{if-then-else} rules or some kind of decision trees along with a series of thresholds and confidence intervals; during system operations data are evaluated against this rules and countermeasures are eventually taken. Even though this is the most common approach, it still needs a lot of manual effort and requires access to domain knowledge so these requirements still limit portability and scalability of applications based on this technique.
 
 \section{IBM Research approach}
@@ -74,7 +74,8 @@ the label RATSF1R9 (Room Air Temperature Sensor, Floor 1, Room 9) has a high sim
   \end{tabular}
 \end{table}
 
-this process clearly requires human supervision, hence the definition of semi-automatic, but through this approach the operator has to manually inspect a smaller subset of all the possible marketsets \cite{semantic_mapping} thus taking minutes instead of several weeks to complete the semantic mapping. The output of this process is the semantic model of the specific building according to the chosen ontology. A chart illustrating the whole process is shown in \autoref{fig:semantic_mapping}.
+this process clearly requires human supervision, hence the definition of semi-automatic, but through this approach the operator has to manually inspect a smaller subset of all the possible marketsets, thus taking minutes instead of several weeks to complete the semantic mapping; practical experiments demonstrated that through this approach the decrease in number of labels to analyze is the 7.5\% of the total number of BMS labels \cite{semantic_mapping}.
+The output of this process is the semantic model of the specific building according to the chosen ontology. A flowchart illustrating this process is shown in \autoref{fig:semantic_mapping}.
 
 \begin{figure}
   \includegraphics[width=1\textwidth]{semantic_mapping.pdf}
@@ -82,31 +83,34 @@ this process clearly requires human supervision, hence the definition of semi-au
   \label{fig:semantic_mapping}
 \end{figure}
 
-\section{Physic model inference}
+\subsection{Physic model inference}
 The semantic model obtained from the semantic mapping phase is a model of the building architecture, assets, sensors and their loaction across the building. The model still lacks information about the physic processes taking place in the building and how the actual physic model is monitored and influenced by the points (sensors, setpoints etc.) in the building. Manually building the physical model of a building is unpractical and costly, thus the developed framework approaches this challange through the use of semantic inference techniques. This phase requires as inputs the semantic model of the building and an appropriate ontology that models the physics variables. % TODO something about difference between modelling the upper ontology and creating the actual model
 Given those inputs, through the reasoning process is possible to automatically add the correct dependencies and physical processes to the model. This process is separated in two phases:
 \begin{itemize}
   \item physical properties inference: it recreates the physical variables that are involved in physical processes. The properties are either mandatory or optional.
   \item physical processes inference: once the physical properties are set in place, it is possible to link them together according to the domain knowledge specified in the upper ontology.
 \end{itemize}
+further informations about the concept of reasoning, reasoner and further details about implementation choices for this approach are given in \autoref{} % TODO Chapter 4
 
-\subsection{Physical properties inference}
-Properties represent physical quantities in the real world and can be mandatory or optional. Mandatory property are characteristic of a ssn:FeatureOfInterest and need to be created for each instance of that feature. For example, in \autoref{fig:mandatory_properties} it is shown that the concept of :Room phy:requiresProperty :Temperature, that means that every instance of a :Room needs to be associated with a property that is an instance of :Temperature, or in plain english that every room has a temperature, therefore :Temperature is a mandatory property.
+\paragraph{Physical properties inference}
+Properties represent physical quantities in the real world and can be mandatory or optional. Mandatory property are characteristic of a ssn:FeatureOfInterest and need to be created for each instance of that feature. This behaviour is specified in the ontology of the physic through the use of the phy:requiresProperty relationship, so that during the reasoning mandatory properties can be automatically created. For example, in \autoref{fig:properties} it is shown that the concept of :Room phy:requiresProperty :Temperature, that means that every instance of a :Room needs to be associated with a property that is an instance of :Temperature, or in plain english that every room has a temperature.
 \begin{figure}
   \centering
-  \includegraphics[width=1\textwidth]{reason_mandatory.pdf}
-  \caption{Process of inference of mandatory properties.}
-  \label{fig:mandatory_properties}
+  \includegraphics[width=1\textwidth]{properties.pdf}
+  \caption{Process of inference of mandatory and optional properties.}
+  \label{fig:properties}
 \end{figure}
-Optional properties, on the other hand, need to be created only if some requirements are met, for example a :Room have a :Cooling property only if a :CoolingActuator is present in said room, and it is modeled in the upper ontology as :CoolingActuator phy:defaultObserved :Cooling.
+Optional properties, on the other hand, need to be created only if some requirements are met, for example a :Room have a :Cooling property only if a :CoolingActuator is present in said room, and it is modeled in the ontology as :CoolingActuator phy:defaultObserved :Cooling. In \autoref{fig:properties} it can be seen that only :Room709 has a :Cooling property since it's the only room that has a :CoolingActuator.
+The :requiresProperty and :defaultObserved properties\footnote{intended as the semantic concept of relationship between entities, not to be confused with domain knwoledge properties like :Temperature.} are concept level references and model general knowledge. General knowledge describe the domain without bothering about the ground truth. That means, for example, that the concept of :Room requires the existance of the concept of :Energy even if in the model of the real world there aren't any rooms. The existance of said properties is the key for the automatic reasoning process.
 
-\subsection{Physical processes inference}
+\paragraph{Physical processes inference}
 Once all the actual properties have been infered for a specific configuration, it is time to append to the model informations about the physical processes involving such properties. As already stated in \autoref{ssubsec:extended_ssno}, physical processes are modeled as Linear Time Invariant (LTI) systems based on the fact that Multiple Input Multiple Output (MIMO) processes can be decomposed into multiple Multiple Input Multiple Output (MISO) processes. A MISO process can be further subclassed as a Single Input Single Output process. Each process follows the rules
 \begin{description}[noitemsep]
   \item\textbf{Rule 1} a process has at least one input and exactly one output
   \item\textbf{Rule 2} when a process has multiple inputs, they superpose additively
 \end{description}
 given these rules, it is possible to define a class hierarchy of LTI processes that are used to model a physical system. A subset of said taxonomy is available at \autoref{tab:lti_taxonomy}.
+% TODO detail about LTI processes
 \begin{table}
   \centering
   \caption{Taxonomy of the semantic representation of LTI processes}
@@ -131,7 +135,7 @@ given these rules, it is possible to define a class hierarchy of LTI processes t
   \end{tabular}
 \end{table}
 
-\subsection{Example of the reasoning process}
+\section{Example of the whole approach}
 In order to better explain the concepts presented in the previous sections an example of the full process applied to a room, facing the outside environment, with a cooling Air Handling Unit (AHU). At the end of the section it is shown that a full model of the room, its internal and external processes is derived. This model will then be used during the explanation of the diagnosis process. Looking back at \autoref{fig:approach_overview}, we start by defining the inputs needed for the process (sharp top boxes).
 \paragraph{Building data and semantic model}
 It is assumed that some kind of BMS is available in the building so that through the BMS is it possible to retrieve both labels (for semantic mapping) and data of various sensors (useful for diagnosis purposes, see ). % TODO see later chapters
@@ -153,11 +157,11 @@ The room analyzed in the example will be named ROOM1. In ROOM1 an air temperatur
     1241 & ATS\textunderscore Outside \\\hline
   \end{tabular}
 \end{table}
-through the semantic mapping tool (\ref{subsec:semantic_mapping}) it is possible to map the labels in the BMS to the Semantic type in the brick ontology. The user can also give the systems additional information about the architecture of the building and the location of equipments and sensors. It is then possible to map :B3 as a brick:Location, :ROOM1 still as brick:Location, and then link one to the other as :ROOM1 brick:isPartOf :B3 and so on. The tool will also discover the semantic type of the sensor and will be able to create the correct instances, for example it will add to the model an air temperature sensor named :ATSROOM1 and will link it as a point to :ROOM1. The output semantic graph can be seen in \autoref{fig:semantic_mapping_example} where the instances created from the BMS and their mutual relationships are bold, while the brick ontology concepts and relationships are light grey.
+through the semantic mapping tool (\ref{subsec:semantic_mapping}) it is possible to map the labels in the BMS to the Semantic type in the brick ontology. The user can also give the systems additional information about the architecture of the building and the location of equipments and sensors. It is then possible to map :B3 as a brick:Location, :ROOM1 still as brick:Location, and then link one to the other as :ROOM1 brick:isPartOf :B3 and so on. The tool will also discover the semantic type of the sensor and will be able to create the correct instances, for example it will add to the model an air temperature sensor named :ATSROOM1 and will link it as a point to :ROOM1. The output semantic graph can be seen in \autoref{fig:semantic_mapping_example} where the instances created from the BMS and their mutual relationships are bold, while the brick ontology concepts and relationships are light grey. This is the building semantic model, that will be used together with the physic model described in the next paragraph to infer knowledge about the physics properties and relationships in the building.
 
 \begin{figure}
   \includegraphics[width=1\textwidth]{semantic_mapping_example.pdf}
-  \caption{Complete model for a room in a building equipped with an AHU}
+  \caption{Complete semantic model of a room in a building equipped with an AHU according to Brick ontology}
   \label{fig:semantic_mapping_example}
 \end{figure}
 
@@ -182,7 +186,8 @@ From \autoref{eq:room_variables} it can be seen that
 while from \autoref{eq:energy_composition} it follows that
 \begin{enumerate}[noitemsep, resume]
   \item a room's temperature is influenced by the energy in a first order lag process [Process, PT1]
-  \item rooms can be cooled and cooling is negative proportional (NP) with the room's energy
+  \item rooms can be cooled, if they have a cooling actuator [Property, optional]
+  \item cooling is negative proportional (NP) with the room's energy
   \item room energy depends from the adjacents enviroment's temperature proportional to the shared surface $A_i$ and the heat transfer coefficient $h_i$, hence the dependency is a positive proportional process [Process, PP]
 \end{enumerate}
 further analyzing the physic involved, bring to the conclusion that
@@ -198,12 +203,48 @@ additional knowledge can be added if the physics of the system in known; for exa
 \begin{equation}
   Q_{Cool}=\frac{c_a\dot{m_{a}^{e}}c_c\dot{m_{c}^{e}}}{c_{a}\dot{m_{a}^{e}}+c_c\dot{m_{c}^{e}}}(\vartheta_{a}-\vartheta_{c}) \label{eq:cooling_load}
 \end{equation}
-this leads to the following conclusions
+this, given that $\vartheta_a$ is the mixed air temperature, $\dot{m_a}$ the air flow rate, $\vartheta_c$ the chilled water temperature and $\dot{m_c}$ the chilled water flow rate, leads to the following conclusions
 \begin{enumerate}[noitemsep, resume]
-  \item AHUs are used for cooling [Poperty, mandatory]
   \item cooling is a complex function of the air temperature, the chilled water temperature, the supply air flow and the water flow in the coil [Process, MISO]
 \end{enumerate}
-\textcite{building_chiller_physics} provide a simple model of a chiller's physic, which equation can be expressed as
+finally, \textcite{building_chiller_physics} provide a simple model of a chiller's physic, which equation can be expressed as
 \begin{equation}
   \dot{m_c}c_w(\vartheta_{cret}-\vartheta_c)=\eta_{COP}W
 \end{equation}
+from which it can be derived
+\begin{enumerate}
+  \item the chilled water tempearture decrease with the increase of the power consumption [Process, NP]
+  \item the water flow rate increase as the power consumption of the pump increase [Process, PP]
+\end{enumerate}
+\begin{figure}
+  \begin{subfigure}[b]{.6\textwidth}
+    \centering
+      \includegraphics[width=1\linewidth]{mandatory_properties.pdf}
+      \caption{Mandatory properties}
+      \label{fig:mandatory_properties}
+  \end{subfigure}
+  \begin{subfigure}[b]{.4\textwidth}
+    \centering
+      \includegraphics[width=1\linewidth]{optional_properties.pdf}
+      \caption{Optional properties}
+      \label{fig:optional_properties}
+  \end{subfigure}
+  ~
+  \centering
+  \begin{subfigure}[b]{.5\textwidth}
+    \centering
+      \includegraphics[width=1\linewidth]{processes_definition.pdf}
+      \caption{Process}
+      \label{fig:processes_definition}
+  \end{subfigure}
+  \caption{Patterns for definition of a model for a system's physic}
+  \label{fig:physic_model}
+\end{figure}
+This dependencies can be semantically mapped to a domain ontology that still use concept from Brick, SSN and its extended version and \autoref{fig:physic_model} shows how (part) of the discovered domain knowledge can be represented using those ontologies.
+It is clear that this part is the most costly of the whole process, especially timewise, since it requires very specific expertise. In the example, for instance, it is not captured that a room's internal energy is influenced by the radiant heat of the sun but it would have been possible to do so. The good side of this approach is that the modelling efforts need to be done juste once per domain as the ontology will be reusable and will adjust itself to the bulding instance trough the automatic reasoning process.
+
+\paragraph{Reasoning process}
+The reasoning process is divided in two main phases: the discovery of the physic properties and the creation of the physic processes involving those properties. This requires access to the building semantic model created during the semantic mapping phase and the physic model derived by expert for the particular domain (e.g physic model of HVAC system). Both the phases work on the ontology (metadata) to draw conclusions about the instances. The first phase has to be the the property discovery one, sicne those properties are inputs and outputs for the processes. Based on the ontology derived in the previous paragraph (\autoref{}) and the semantic model of the building, through the application of simple reasoning rules, it is possible to derive the whole semantic graph of both the building and its actual physic beahviour, as seen in \autoref{}. This process is based on rules that capture domain expertise and are based on a set of entailment rules as
+\begin{description}[noitemsep]
+  \item every room has an energy, $Room(x) \Rightarrow hasProperty(x, y)\wedge Energy(y)$
+\end{description}
