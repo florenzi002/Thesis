@@ -83,8 +83,7 @@ The output of this process is the semantic model of the specific building accord
 \end{figure}
 
 \subsection{Physic model inference}
-The semantic model obtained from the semantic mapping phase is a model of the building architecture, assets, sensors and their loaction across the building. The model still lacks information about the physic processes taking place in the building and how the actual physic model is monitored and influenced by the points (sensors, setpoints etc.) in the building. Manually building the physical model of a building is unpractical and costly, thus the developed framework approaches this challange through the use of semantic inference techniques. This phase requires as inputs the semantic model of the building and an appropriate ontology that models the physics variables. % TODO something about difference between modelling the upper ontology and creating the actual model
-Given those inputs, through the reasoning process is possible to automatically add the correct dependencies and physical processes to the model. This process is separated in two phases:
+The semantic model obtained from the semantic mapping phase is a model of the building architecture, assets, sensors and their loaction across the building. The model still lacks information about the physic processes taking place in the building and how the actual physic model is monitored and influenced by the points (sensors, setpoints etc.) in the building. Manually building the physical model of a building is unpractical and costly, thus the developed framework approaches this challange through the use of semantic inference techniques. This phase requires as inputs the semantic model of the building and an appropriate ontology that models the physics variables. Given those inputs, through the reasoning process is possible to automatically add the correct dependencies and physical processes to the model. This process is separated in two phases:
 \begin{itemize}
   \item physical properties inference: it recreates the physical variables that are involved in physical processes. The properties are either mandatory or optional
   \item physical processes inference: once the physical properties are set in place, it is possible to link them together according to the domain knowledge specified in the upper ontology.
@@ -119,7 +118,6 @@ Each process follows the rules
   \item\textbf{Rule 2} when a process has multiple inputs, they superpose additively.
 \end{description}
 Given these rules, it is possible to define a class hierarchy of LTI processes that are used to model a physical system. A subset of said taxonomy is available at \autoref{tab:lti_taxonomy}.
-% TODO detail about LTI processes
 \begin{table}
   \centering
   \caption{Taxonomy of the semantic representation of LTI processes}
@@ -143,6 +141,9 @@ Given these rules, it is possible to define a class hierarchy of LTI processes t
     Multiplicative (M) & MISO & $y(t)=u_1(t)\cdot u_2(t)$
   \end{tabular}
 \end{table}
+
+\subsection{Learning the normal behaviour}\label{subsec:learn_behaviour}
+This phase is not strictly related to the ones detailed in the previous sections in this chapter, yet it is of utmost importance for the diagnosis process. This phase allows for the definition of general rules that represent a confidence interval of the normal behaviour of the sensors. These rules are derived from different statistical and machine learning methods. \textcite{inproceedings_cognitive_buildings} suggest the use of Artificial Neural Networks (ANN) for modelling the temperature comfort in a room. Generalized Addictive Models (GAM) can be used for modelling energy processes so that a subsequent Autoregressive Moving Avarage (ARMA) model can characterize the normal behaviour\cite{e2d}. The approach determines a series of upper and lower bounds that characterize the normality interval for a given sensor. Behaviours outside these ranges are classified as anomaly and they trigger the diagnosis phase. Studying this methods is outside the scope of the thesis and so these confidence intervals are assumed to be known without bothering about how they were derived.
 
 \section{Example of the whole approach}
 In order to better explain the concepts presented in the previous sections, it is provided an example of the full process applied to a room, facing the outside environment, with a cooling Air Handling Unit (AHU). At the end of the section it is shown that a full model of the room and its internal and external processes are derived. This model will then be used during the explanation of the diagnosis process. Looking back at \autoref{fig:approach_overview}, we start by defining the inputs needed for the process (sharp top boxes).
@@ -257,7 +258,8 @@ The rules to be applied are:
   \item if there is a room, it has a temperature, $Room(r)\Rightarrow Temperature(t)\wedge hasProperty(r,t)$
   \item if there is a temperature sensor in a room, the room has a temperature and the temperature is observed by the sensor, $Room(r)\wedge Temperature\_Sensor(ts)\wedge hasPoint(r,ts)\Rightarrow Temperature(t)\wedge hasProperty(r,t)\wedge observes(s,t)$
   \item energy influences the temperature through a PT1 process, $Room(r)\wedge Energy(e)\wedge hasProperty(r,e)\wedge Temperature(t)\wedge hasProperty(r,t)\Rightarrow PT1(p)\wedge hasInput(p,e)\wedge hasOutput(p,t)$
-  \item if a AHU has a coil water flow sensor then it has a coil water flow property, $AHU(a)\wedge CoilWaterFlowSensor(s)\wedge hasPoint(a,s)\Rightarrow CoilWaterFlow(f)\wedge hasProperty(a,f)\wedge observes(s,f)$
+  \item energy of a room depends on the outside temperature if they are adjacent, $Room(r)\wedge Outside(o)\wedge isNextTo(r,o)\wedge Temperature(t)\wedge hasProperty(o,t)\wedge Energy(e)\wedge hasProperty(r,e)\Rightarrow PP(p)\wedge hasInput(p,t)\wedge hasOutput(p,e)$
+  \item if a AHU has a coil water flow sensor then it has a coil water flow property, $AHU(a)\wedge CoilWaterFlowSensor(s)\wedge hasPoint(a,s)\Rightarrow CoilWaterFlow(f)\wedge hasProperty(a,f)\wedge observes(s,f)$.
 \end{itemize}
 \begin{figure}
   \centering
@@ -265,4 +267,6 @@ The rules to be applied are:
   \caption{Semantic model of the building and its physics}
   \label{fig:ex_building_full}
 \end{figure}
-looking back at the examples in this chapter, one can notice that even in a small example there are many informations encoded in the graph and so it starts to grow in size and complexity. Therefore it start to surface one of the challanges of this approach, addressed in \autoref{ch:framework}, that is the scalability issue.
+The reasoning rules can be completed for the remaining AHU's components reusing similar patterns as those shown in the list above.
+These inference rules are explicitly written as implications among instances (no ontological reasoning is involved) because it is easier to convey the concept this way and, since this example is really small, it was easy and fast enough to be done by hand. Even a slightly more complex example would have required a more refined reasoning scheme involving the concepts, the instances and their mutual relationships. However it is already possible to get a grasp of the portability of this approach just noticing that, just with these simple rules, it does not matter how many instances of rooms, AHUs or chillers there can be. The reasoner would still enforce the correct properties in an automatic fashion.
+Looking back at the examples in this chapter, it can be noticed that, even in a small example, there are many informations encoded in the graph that starts to grow in size and complexity. Therefore it starts to surface one of the challanges of this approach, addressed in \autoref{ch:framework}, that is the scalability issue for big commercial buildings.
