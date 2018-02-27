@@ -250,8 +250,8 @@ This dependencies can be semantically mapped to a domain ontology that still use
 It is clear that this part is the most costly of the whole process, especially timewise, since it requires very specific expertise. In the example, for instance, it is not captured that a room's internal energy is influenced by the radiant heat of the sun but it would have been possible to do so. The good side of this approach is that the modelling efforts need to be done just once per domain as the ontology is reusable and will adjust itself to the bulding instance trough the automatic reasoning process.
 
 \paragraph{Reasoning process}
-The reasoning process is divided in two main phases: the discovery of the physical properties and the creation of the physical processes involving those properties. This requires access to the building semantic model created during the semantic mapping phase and the physic model derived by expert for the particular domain (e.g physic model of HVAC system). Both the phases work on the ontology (metadata) to draw conclusions about the instances. The first phase has to be the properties discovery one, since those properties are inputs and outputs for the processes. Based on the ontology derived in the previous paragraph and the semantic model of the building (\autoref{fig:semantic_mapping_example}), through the application of simple reasoning rules, it is possible to derive the whole semantic graph of both the building and its actual physic beahviour, as seen in \autoref{}(figure to be completed) , in a simplified form\footnote{Since even the degree of complexity of the semantic graph of small example is too high, the fidelity to the real implementation is dropped for clairty's sake.}.
-The rules to be applied are
+The reasoning process is divided in two main phases: the discovery of the physical properties and the creation of the physical processes involving those properties. This requires access to the building semantic model created during the semantic mapping phase and the physic model derived by expert for the particular domain (e.g physic model of HVAC system). Both the phases work on the ontology (metadata) to draw conclusions about the instances. The first phase has to be the properties discovery one, since those properties are inputs and outputs for the processes. Based on the ontology derived in the previous paragraph and the semantic model of the building (\autoref{fig:semantic_mapping_example}), through the application of simple reasoning rules, it is possible to derive the whole semantic graph of both the building and its actual physic beahviour, as seen in \autoref{fig:ex_building_full}, in a simplified form\footnote{Since even the degree of complexity of the semantic graph of small example is too high, the fidelity to the real graph is dropped for clairty's sake.}.
+The rules to be applied are:
 \begin{itemize}
   \item if there is a room, it has an internal energy, $Room(r)\Rightarrow Energy(e)\wedge hasProperty(r,e)$
   \item if there is a room, it has a temperature, $Room(r)\Rightarrow Temperature(t)\wedge hasProperty(r,t)$
@@ -259,5 +259,10 @@ The rules to be applied are
   \item energy influences the temperature through a PT1 process, $Room(r)\wedge Energy(e)\wedge hasProperty(r,e)\wedge Temperature(t)\wedge hasProperty(r,t)\Rightarrow PT1(p)\wedge hasInput(p,e)\wedge hasOutput(p,t)$
   \item if a AHU has a coil water flow sensor then it has a coil water flow property, $AHU(a)\wedge CoilWaterFlowSensor(s)\wedge hasPoint(a,s)\Rightarrow CoilWaterFlow(f)\wedge hasProperty(a,f)\wedge observes(s,f)$
 \end{itemize}
-
-% TODO finish the rules, explain some problems
+\begin{figure}
+  \centering
+  \includegraphics[width=.95\textheight, angle=90, keepaspectratio]{example_full.pdf}
+  \caption{Semantic model of the building and its physics}
+  \label{fig:ex_building_full}
+\end{figure}
+looking back at the examples in this chapter, one can notice that even in a small example there are many informations encoded in the graph and so it starts to grow in size and complexity. Therefore it start to surface one of the challanges of this approach, addressed in \autoref{ch:framework}, that is the scalability issue.
