@@ -122,11 +122,10 @@ Given these rules, it is possible to define a class hierarchy of LTI processes t
   \centering
   \caption{Taxonomy of the semantic representation of LTI processes}
   \label{tab:lti_taxonomy}
-
   \begin{tabular}{lll}\hline
     \textbf{Semantic concept} & \textbf{Parent} & \textbf{Formal definition} \\\hline
-    MISO & Process & $y_i(t)=\mathbf{c_i}\cdot \mathbf{x_i}+\mathbf{d_i}\cdot \mathbf{u_i}(t)=f(\mathbf{u}(t))$ \\\hline
-    SISO & MISO & $y_i(t)=\mathbf{c_i}\cdot \mathbf{x_i}+d_i\cdot u_i(t)=f(u(t))$ \\\hline
+    MISO & Process & $y_i(t)=\bm{c_i}\cdot \bm{x_i}+\bm{d_i}\cdot \bm{u_i}(t)=f(\bm{u}(t))$ \\\hline
+    SISO & MISO & $y_i(t)=\bm{c_i}\cdot \bm{x_i}+d_i\cdot u_i(t)=f(u(t))$ \\\hline
     Positive Correlted (PC) & SISO & $y(t)\propto u(t)$ \\
     Negative Correlated (NC) & SISO & $y(t)\propto -u(t)$ \\
     Proportional (P) & SISO & $y(t)=k_p\cdot u(t)$ \\
