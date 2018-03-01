@@ -253,12 +253,12 @@ It is clear that this part is the most costly of the whole process, especially t
 The reasoning process is divided in two main phases: the discovery of the physical properties and the creation of the physical processes involving those properties. This requires access to the building semantic model created during the semantic mapping phase and the physic model derived by expert for the particular domain (e.g physic model of HVAC system). Both the phases work on the ontology (metadata) to draw conclusions about the instances. The first phase has to be the properties discovery one, since those properties are inputs and outputs for the processes. Based on the ontology derived in the previous paragraph and the semantic model of the building (\autoref{fig:semantic_mapping_example}), through the application of simple reasoning rules, it is possible to derive the whole semantic graph of both the building and its actual physic beahviour, as seen in \autoref{fig:ex_building_full}, in a simplified form\footnote{Since even the degree of complexity of the semantic graph of small example is too high, the fidelity to the real graph is dropped for clairty's sake.}.
 The rules to be applied are:
 \begin{itemize}
-  \item if there is a room, it has an internal energy, $Room(r)\Rightarrow Energy(e)\wedge hasProperty(r,e)$
-  \item if there is a room, it has a temperature, $Room(r)\Rightarrow Temperature(t)\wedge hasProperty(r,t)$
-  \item if there is a temperature sensor in a room, the room has a temperature and the temperature is observed by the sensor, $Room(r)\wedge Temperature\_Sensor(ts)\wedge hasPoint(r,ts)\Rightarrow Temperature(t)\wedge hasProperty(r,t)\wedge observes(s,t)$
-  \item energy influences the temperature through a PT1 process, $Room(r)\wedge Energy(e)\wedge hasProperty(r,e)\wedge Temperature(t)\wedge hasProperty(r,t)\Rightarrow PT1(p)\wedge hasInput(p,e)\wedge hasOutput(p,t)$
-  \item energy of a room depends on the outside temperature if they are adjacent, $Room(r)\wedge Outside(o)\wedge isNextTo(r,o)\wedge Temperature(t)\wedge hasProperty(o,t)\wedge Energy(e)\wedge hasProperty(r,e)\Rightarrow PP(p)\wedge hasInput(p,t)\wedge hasOutput(p,e)$
-  \item if a AHU has a coil water flow sensor then it has a coil water flow property, $AHU(a)\wedge CoilWaterFlowSensor(s)\wedge hasPoint(a,s)\Rightarrow CoilWaterFlow(f)\wedge hasProperty(a,f)\wedge observes(s,f)$.
+  \item if there is a room, it has an internal energy, $Room(r)\Rightarrow Energy(e)\land hasProperty(r,e)$
+  \item if there is a room, it has a temperature, $Room(r)\Rightarrow Temperature(t)\land hasProperty(r,t)$
+  \item if there is a temperature sensor in a room, the room has a temperature and the temperature is observed by the sensor, $Room(r)\land Temperature\_Sensor(ts)\land hasPoint(r,ts)\Rightarrow Temperature(t)\land hasProperty(r,t)\land observes(s,t)$
+  \item energy influences the temperature through a PT1 process, $Room(r)\land Energy(e)\land hasProperty(r,e)\land Temperature(t)\land hasProperty(r,t)\Rightarrow PT1(p)\land hasInput(p,e)\land hasOutput(p,t)$
+  \item energy of a room depends on the outside temperature if they are adjacent, $Room(r)\land Outside(o)\land isNextTo(r,o)\land Temperature(t)\land hasProperty(o,t)\land Energy(e)\land hasProperty(r,e)\Rightarrow PP(p)\land hasInput(p,t)\land hasOutput(p,e)$
+  \item if a AHU has a coil water flow sensor then it has a coil water flow property, $AHU(a)\land CoilWaterFlowSensor(s)\land hasPoint(a,s)\Rightarrow CoilWaterFlow(f)\land hasProperty(a,f)\land observes(s,f)$.
 \end{itemize}
 \begin{figure}
   \centering

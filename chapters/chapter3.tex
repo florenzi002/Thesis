@@ -8,16 +8,16 @@ The diagnosis activity is comprised of three main step:
   \item fault isolation, that is the discovery of the causes of the fault. It is a key step for enabling a precise diagnosis of the problem. In this approach informations derived from the semantic graph are used to narrow down the set of possible faults to the most relevant ones.
   \item fault identification, that is to determine with some confidence which are the actual causes of a fault among all the possible causes. The proposed diagnoser implements a voting scheme to identify these causes.
 \end{itemize}
-While explaining the diagnosis approach, it will be used the same model presented in \autoref{ch:model} ( \autoref{fig:ex_building_full}), that will be represented in a compact notation shown in \autoref{fig:simple_model}, where every component is an instance of a concept with the same name (internalized representation).
+While explaining the diagnosis approach, it will be used the same model presented in \autoref{ch:model} ( \autoref{fig:ex_building_full}), that will be represented in a compact notation shown in \autoref{fig:simple_model}, where every component is an instance of a concept with the same name (internalized representation). Moreover, for the sake of simplicity, the physic model of the system is simplified to a more lax one, dropping the MISO processes and the PT1 ones in favor of the PP and NP ones.
 \begin{figure}
   \includegraphics[width=\textwidth]{simple_diagnosis_ex.pdf}
   \caption{Internalized model of the example building}
   \label{fig:simple_model}
 \end{figure}
 The diagnoser is run every time an anomaly is detected in the timeseries. An anomaly is intended as a deviation from the normal behaviour clearly detectable by some preset upper and lower bounds, therefore an anomaly can be classified as high or low.
-It is assumed that an anomaly is symptom of some kind of fault in the system. The algorithm starts, as soon as the anomaly is detected, by identifying the semantic type of the anomaly and the potential causes in the graph. It proceeds computing the voting vector and, eventually, it is recursively executed for all those properties that get a voting score equals or greater then one. When no other causes with a high score are left, the algorithm terminates and produces a list of the detected causes along with the name of the faulty properties, the semantic type of the faults and the estimatation, expressed in percentage, of the responsability of those causes towards the diagnosed anomaly.
+It is assumed that an anomaly is symptom of some kind of fault in the system. The algorithm starts, as soon as the anomaly is detected, by identifying the semantic type of the anomaly and the potential causes in the graph. It proceeds computing the voting vector and, eventually, it is recursively executed for all those properties that get a voting score equals or greater then one. When no other causes with a high score are left, the algorithm terminates and produces a list of the detected causes along with the name of the faulty properties, the semantic type of the faults and the estimatation, expressed in percentage, of the responsability of those causes towards the diagnosed anomaly. The relative pseudocode is in \autoref{alg:diagnosis_algorithm}.
 \begin{algorithm}
-  \caption{General diagnosis algorithm}\label{diagnosis}
+  \caption{General diagnosis algorithm}\label{alg:diagnosis_algorithm}
   \begin{algorithmic}[1]
     \Require
       \Statex the anomaly $A$,
@@ -41,7 +41,7 @@ It is assumed that an anomaly is symptom of some kind of fault in the system. Th
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
-\paragraph{Potential causes}
+\section{Potential causes}
 The first non-trivial operation of the algorithm is the identification of the possible causes of a given an anomaly. A potential cause is an observation made by a sensor that observe a property and such that the following hold:
 \begin{enumerate}
   \item the property observed by the sensor is an input of a process that directly output to the anomaly, or it is connected to the anomalous property by a chain of unobservable properties
@@ -87,11 +87,11 @@ The causes retrieved at this point are the ones that are correlated at various d
     Any & Lag & Lag \\\hline
   \end{tabular}
 \end{table}
-Given these new processes, that directly correlate an anomaly to its potential causes, it is possible to infer the entity of the potential cause. This information is computed thanks to the intuition that the type of process correlating two observation carries qualitative information about the output. It is possible, for example, predict that an observation that is influenced by a positive correlation process whose input is an observation that is high is high itself. The ontology defines the combinations listed in \autoref{fig:anomaly_type_prediction}.
+Given these new processes, that directly correlate an anomaly to its potential causes, it is possible to infer the entity of the potential cause. This information is computed thanks to the intuition that the type of process correlating two observation carries qualitative information about the output. It is possible, for example, predict that an observation that is influenced by a positive correlation process whose input is an observation that is high is high itself. The ontology defines the combinations listed in \autoref{tab:anomaly_type_prediction}.
 \begin{table}
   \centering
   \caption{Predicted value of an observation based on the process it depends on and the input to such process}
-  \label{fig:anomaly_type_prediction}
+  \label{tab:anomaly_type_prediction}
   \begin{tabular}{lll}
     \hline\textbf{Anomaly type} & \textbf{Process type} & \textbf{Cause type}\\\hline
     High & Positive correlated & High\\
@@ -101,3 +101,99 @@ Given these new processes, that directly correlate an anomaly to its potential c
     Any & Lag & Lag \\\hline
   \end{tabular}
 \end{table}
+Thanks to those informations it is possible to implement the fault identification capablities of the algorithm.
+\section{Fault identification}
+The whole approach is based on the intuitive assumption that an anomaly is caused by faults and that the measurement of the behaviour of such faults needs to be anomalous too. Moreover this anomalous behaviour needs to be semantically coherent with the behaviour predicted from the chain of process that links the anomaly to the cause. These two principles are at the base of the voting algorithm.
+\begin{algorithm}
+  \caption{Voting algorithm}\label{diagnosis}
+  \begin{algorithmic}[1]
+    \Require
+      \Statex the anomaly $A$,
+      \Statex a set of possible causes of $ A, PC_A$,
+      \Statex the semantic type of the anomaly, $T$,
+    \Ensure the vector of votes, $\bm v$
+    \Procedure{computeReputationVoteVector}{$A,T,PC_A$}
+    \State $S\leftarrow$ \Call{getHistoricalTimeSeries}{}
+    \State $S'\leftarrow$ \Call{getSimilarHistoricalData}{$S,A$}
+    \State $\bm V\leftarrow\emptyset$\Comment{the voting matrix}
+    \ForAll {$p\in PC_A$}
+    \State $S''\leftarrow$ \Call{getSimilarHistoricalData}{$S',p$}
+    \ForAll {$c\in PC_A$}
+    \State $d_{p,c}\leftarrow$ \Call{calculateDistance}{$S'',c$}
+    \State $v_{p,c}\leftarrow$ \Call{calculateDistance}{$S'',c$}
+    \EndFor
+    \State $\bm r\leftarrow$ \Call{calculateReputation}{$\bm V$}
+    \State $\bm v\leftarrow$ \Call{weightVotes}{$\bm V, \bm r$}
+    \EndFor
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+The algorithm works by computing, from the set of anomaly-free time series, a world view (that is a subset of the historical data for each time series) where the property that presents an anomaly would be anomaly free but close in range to the anomalous value. This can be done by selecting all the anomaly-free data of the sensor that observed the fault; these values are splitted in deciles and the decile closest to the anomalous value is chosen, that is the first decile if the anomaly is of type Low or the tenth if it is of type High. For every potential cause are then extracted the samples measured at the same timestamp as the samples of the anomalous property that fall in the chosen decile.
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{subset_creation.pdf}
+  \caption{Creation of the set $S^{'}$}
+  \label{fig:subsets}
+\end{figure}
+given this subset $S^{'}\subset S$ each potential cause will derive a second subset $S^{''}_p\subset S^{'}$ which represent the view of the system from the point of view of one of the potential causes, that provide its point of view assuming it is not anomalous itself. The method is the same described for the computation of $S^{'}$, using the value observed for that property at the time of the anomaly instead of the one of the anomaly itself.
+At this point every potential cause $p$ has the informations needed to give the opinion, that is to vote, about which is the actual cause $c$ of the fault, according to its percieved state of the world $S^{''}_p$. The voting is expressed in terms of normalized mean distance $d_{p,c}$ between the actual value observed by the suspect property at the time $t_0$ of occurence of the anomaly and the mean of the samples values that represent the behaviour of the potential cause expected by the voting variable.
+\begin{equation}
+  \label{eq:norm_mean_dist}
+  d_{p,c}=10\frac{s_c(t_0)-\operatorname{mean}S^{''}_{p,c}}{\operatorname{max}S_c-\operatorname{min}S_c}
+\end{equation}
+Normalization occurs in a range of [-10,10] with the maximum and minimum value of the whole time series in $S$ (anomalous values included). This steps ensure that the different measurements can be comparable. %TODO think about the example of cm vs m.
+The resulting distance is less then zero if the actual value observed for a property is lower than the value the voting property is expecting to see, it is greater than zero otherwise. This information about the signedess of the computed distance plays a key role during the fault identification because it helps discriminating between anomalous values that are the cause of a fault from those anomalous values that are effect of a fault. That means that if the beahviour of a property doesn't match the behaviour that a cause should have, said property can't be a cause and it's vote is set to zero.
+\begin{equation}
+  \label{eq:vote}
+  v_{p,c}=\begin{cases}
+    d_{p,c} & \text{if} d_{p,c}\geq 0 \land \operatorname{type}c\equiv High \\
+    -d_{p,c} & \text{if} d_{p,c}\leq 0 \land \operatorname{type}c\equiv Low \\
+    \left\lVert d_{p,c}\right\rVert & \text{if} \operatorname{type}c\equiv Unknown \\
+    0 & \text{otherwise}
+\end{cases}
+\end{equation}
+For example, if a room's temperature is too high and the real faulty property is the outside temperature, there's a chance that the chiller power consumption will be anomalous too since the chiller is trying to mitigate the effect of the fault. Still the chiller is not a cause of the anomaly. Once the computation of the distances ends, the matrix of the votes have been filled and contains the opinions that the potential causes have of each others. Since the votes have been calculated under the assumptions that the potential cause that is voting is under normal circumstances, if said cause is the origin of the fault then it will flag as faulty all the others, since its point of view will be so distorted that normal behaviours appears as anomalous. This tendency of the faulty property is misleading and thus need to be addressed. The way this algorithm deal with the problem is through the means of the concept of reputation. A potential cause has a high reputation $r_p$, hence it is trustworthy, if it doesn't receive any vote from other causes. The reputation decrease as the porperty receive more votes, as seen in \autoref{eq:reputation}.
+\begin{equation}
+  \label{eq:reputation}
+  r_p=\frac{1}{1+\sum\limits_{c\in PC_A}v_{p,c}}
+\end{equation}
+Given the reputations $r_{c}$ of the potential causes, the total vote $v_p$ received by a potential cause $p$ is given by the sum of the vote of all the properties weighted by the reputation of the property that gave that vote (\autoref{eq:weighted_vote}). It is considered abnormal every property that has a value higher then 1. %TODO refer to example for numeric table of votes
+\begin{equation}
+  \label{eq:weighted_vote}
+  v_p=\sum\limits_{c\in PC_A}r_c\cdot v_{p,c}
+\end{equation}
+An alternative kind of vote is the so called vote count. This method drop the magnitude of the votes and simply count how many votes greater than one have been assigned to a given property $p$ (\autoref{eq:vote_count}).
+\begin{equation}
+  \label{eq:vote_count}
+  \begin{gathered}
+  \bar v_p=\sum\limits_{c\in PC_A}\operatorname{discretize}{(r_c\cdot v_{p,c})}\\
+  \operatorname{discretize}{x}=\begin{cases}
+      1 & \text{if } x\geq 1\\
+      0 & \text{otherwise}
+    \end{cases}
+  \end{gathered}
+\end{equation}
+The formulae result in the vote vector $\bm v=\{v_p|p\in PC_A\}$ and $\bm{\bar v}=\{\bar v_p|p\in PC_A\}$
+\section{Diagnosis example}
+In this section it is shown how the diagnosis take place in the context of a building as in \autoref{fig:simple_model}. It is assumed that the data picked up by the sensors are as in \autoref{fig:timeseries}, the rule that monitor the anomaly is ``if the room's temperature is greater than \ang{25} there's an anomaly'' and the fault is due to the chiller that stopped to work at 1pm.
+\begin{figure}
+  \centering
+  \includegraphics[width=1\textwidth]{timeseries.png}
+  \caption{Example of timeseries of different sensors}
+  \label{fig:timeseries}
+\end{figure}
+The room temperature start rising and a first anomaly is detected, thus starting the diagnosis process.
+Since the anomaly is a temperature greater than \ang{25}, the semantic type of the anomaly is High. Then the possible causes can be traced back, following the rules explained above.
+The backtracked causes and the derived processes are shown in bold in \autoref{fig:backtracking_example}
+\begin{figure}
+  \includegraphics[width=1\textwidth]{backtrack_example.pdf}
+  \caption{Backtracking the possible causes of a HighTemp anomaly}
+  \label{fig:backtracking_example}
+\end{figure}
+As soon as the potential causes are known, it is possible to predict the semantic value of said causes and according to \autoref{tab:anomaly_type_prediction} seen earlier in this chapter it is derived the graph shown in \autoref{fig:semantic_type}.
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\textwidth]{infer_semantic_type.pdf}
+  \caption{Semantic type of potential causes}
+  \label{fig:semantic_type}
+\end{figure}
