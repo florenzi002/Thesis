@@ -5,21 +5,21 @@ This chapter is going to give some informations about the design choice taken wh
 Implementation efforts were aimed at providing a further degree of scalability to the approach and leveraging cloud based technologies as well as reducing the technicality of the involved resource.
 It will be presented a use case that shows the % TODO explain why this framework can help in spreading a EMS
 \section{Fully integrated BMS}
-Previous chapters defined a possible approach for diagnosing smart buildings, developed by IBM Research and it has been shown that such a method works as expected.
+Previous chapters defined a possible approach, developed by IBM Research, for diagnosing smart buildings and it has been shown that such a method works as expected.
 However such instruments needs to be integrated in a broader panorama of services that should be present in a Smart Building. Defining the term Smart Building is a challenging task and various organizations adopt their own definition. % TODO add definitions
-What emerges is that a smart building has to be able to perceive the context it is in, being aware of its status and its occupants. Another key concept it is its ability to react, and adapt, autonoumsly to changes in the environment, possibly predicting and optimizing its behaviour in order to optimize occupants comfort and energy consumption.
-IoT devices provide the context for a Smart Building. Commercial buildings are costantly monitored by IoT smart sensors and meters that provide a huge amount of data. Those data are stored and processed to extract useful information on the state of the building. % TODO chart how many sensors
-Analytics provide the means that the building use to interpret the context and react in a correct way. For example, let a fault occour at a Fan Coil Unit (FCU) in a room. A smart building should be able to detect it, diagnose it, eventually issue a repair request to the manteinance service with a description of the fault. Then, upon arrival of the mainteinance worker, the building should be able to guide said worker through the building itself towards the location of the fault.
+What emerges is that a smart building has to be able to perceive the context it is in, being aware of its status and its occupants. Another key concept it is its ability to react, and adapt, autonomously to changes in the environment, possibly predicting and optimizing its behaviour in order to optimize occupants comfort and energy consumption.
+IoT devices provide the context for a Smart Building. Commercial buildings are constantly monitored by IoT smart sensors and meters that provide a huge amount of data. Those data are stored and processed, aggregated and enriched with external data sources to extract useful information on the state of the building. % TODO chart how many sensors
+Analytics provide the means that the building use to interpret the context and react in a correct way (diagnosis, user comfort models, energy consumption predictions). An example can help to better understand the concept of fully integrated and smart BMS. Let a fault occour at a Fan Coil Unit (FCU) in a room. A Smart Building should be able to detect it, diagnose it, alert the manager, eventually issue a repair request to the maintenance service with a description of the fault. Then, upon arrival of the maintenance worker, the building should be able to guide said worker through the building itself towards the location of the fault with a human-like conversational interface.
 
-\section{Requirements}
-In a Smart Building context it is important to understand what are the main goals that are to be achived by the deployment of such a system. What emerged from this thesis work is that a Smart Building IT infrastructure needs to be build upon a scalable framework that provides a platform for easy and fast analytics deployement. There's a need of a middleware that provide every top level application with a common ground that abstract the physical sensors so that the whole system is integrated and top layer components are able to exchange informations. % example integration of weather data etc.
-This middleware is born from the Semantic Web concept of ontology (see \autoref{ch:semantic_web}) and of semantic reasoning. What is different here is that the scope is note the same. Semantic Web technologies have their focus on massive amount of diverse data that comes from different sources and their goal is somewhat to unify them, a single ontology won't suffice to capture that complexity and therefore highly complex solutions have been developed (OWL). In that context it is of utmost importance the standarization of the approaches and a strict formality in their representation. In the context of Smart Buildings these focus are shifted and requirements become somewhat more lax. Building's data are sensible ans are not supposed to be exchanged outside of the scope of a single organization (a company, a university, etc.), additionaly, since the goal of this framework is to manage a building, the concepts involved are little in numbers and simpler in structure than those involved in the Semantic Web. \textcite{brick_schema} showed how a little number of concepts and relationships (see \autoref{fig:brick_schema}) is required for capturing the complexity of a building. Orthogonal to this, another simple ontology SSNO and its extension (see \autoref{subsec:ssn}), developed by IBM Research, suffice for capturing the complecity of physical interaction between buildings assets, as seen in \autoref{fig:extended_ssno}.
-On top of this, it is important to identify and focus on the potential users of such a system. Those users are both those who benefit from the deployed analytics and those who are going to develop those analytics. It is important to note that none of those users is required to have a deep computer science background of any sort, still they are the ones with most interest in a smart building management system. The system should aim at providing those users the most straightforward default way to interact with the system, trough high-level languages and possibily human language interfaces (see ) but still allows for low level interaction where needed. To sum it up:
+\section{Requirements} \label{sec:requirements}
+In a Smart Building context it is important to understand what are the main goals that are to be achieved by the deployment of such a system. What emerged from this thesis work is that a Smart Building IT infrastructure needs to be build upon a scalable framework that provides a platform for easy and fast analytics deployement. There's a need of a middleware that provide every top level application with a common ground that abstract the physical sensors so that the whole system is integrated and top layer components are able to exchange informations. This middleware is born from the Semantic Web concept of ontology (see \autoref{ch:semantic_web}) and of semantic reasoning. What is different here is that the scope is note the same. Semantic Web technologies have their focus on massive amount of diverse data that comes from different sources and their goal is somewhat to unify them and give them a meaning that is universally accepted. That is a hard goal to achieve for a single simple ontology. Therefore highly complex solutions like the Ontology Web Language (OWL)\cite{owl_reccomendation} have been developed.. In that context standardization and rigid formality in their representation. In the context of Smart Buildings the focus is shifted and requirements become more lax.
+Building's data are sensible and are not supposed to be exchanged outside of the scope of a single organization (a company, a university, etc.), additionally, since the goal of this framework is to manage a building, the concepts involved are little in numbers and simpler in structure than those involved in the Semantic Web. \textcite{brick_schema} showed how a little number of concepts and relationships (see \autoref{fig:brick_schema}) is required for capturing the complexity of a building. Orthogonal to this, another simple ontology SSNO and its extension (see \autoref{subsec:ssn}), developed by IBM Research, suffice for capturing the complexity of physical interaction between buildings assets, as seen in \autoref{fig:extended_ssno}.
+Moreover, opposed to the Semantic Web context, it can't be forget that a part of the integrated system is comprised of human actors who work and live in the buildings and form a big part of the context of the building itself. It is important to identify and focus on the potential users of such a system. Those users are both those who benefit from the deployed analytics and those who are going to develop those analytics, still it is not required from them to have a strong computer science background of any sort. The system should aim at providing those users the most straightforward default way to interact with the system, trough high-level languages and possibily human language interfaces (see \autoref{sec:conversational_interface}) but still allows for low level interaction where needed. To sum it up, the system that is the end goal of the project needs:
 \begin{itemize}
-  \item Easy development tools
-  \item High level scripting languages
-  \item Semantic capabilities to enable integration
-  \item Scalable backend
+  \item easy development tools
+  \item high level scripting languages
+  \item semantic capabilities to enable integration
+  \item scalable back-end
 \end{itemize}
 
 \section{Knowledge Inference Technology for IoT}
@@ -34,7 +34,7 @@ KITT adopt a layered approach as seen in \autoref{fig:kitt}.
 Each of these layers implements different functionalities that will be detailed just below
 
 \subsection{TinkerPop abstraction layer}
-This layer is strictly related to the low level implementation of the graph on the physical store. What is important to note is the choice of representation of the underlying RDF graph that is the base of the semantic approach. Altough many RDF stores and semantic databases are available, the choice made verted towards a graph Data Base (DB) implementation of said RDF graph. The main reason is to be searched in the scalability needs of the project and the scope of it. What has been developed is an integrated semantic framework for Smart Buildings and not a multipurpose layered semantic engine.
+This layer is strictly related to the low level implementation of the graph on the physical store. What is important to note is the choice of representation of the underlying RDF graph that is the base of the semantic approach. Altough many RDF stores and semantic databases are available, the choice made fell towards a graph Data Base (DB) implementation of said RDF graph. The main reason is to be searched in the scalability needs of the project and the scope of it. What has been developed is an integrated semantic framework for Smart Buildings and not a multipurpose layered semantic engine.
 \paragraph{GraphDB vs. RDFStore}
 It is important to note that the word semantic doesn't necessarly mean RDF. When talking about semantic it is intended a way to give a meaning to otherwise unmeaningful data so that more complex operations can be performed, thanks to the abstraction that such additional knowledge provide. It has been said in \autoref{subsec:rdf} that RDF is a way to store triples, and that those triples represent a graph. Ontologies, then, are still triples that makes use of some well known concepts and relationships (e.g Class and subClassOf) to give a meaning to RDF triples. It follows that RDF data, both ground truth and ontologies, can be safely stored in a graphDB. There are also some advantages in using a graph representation. For instance, graph DB implements the so called Labeled Property Graph (LPG) whose main advantage is that of storing vertexes and labels that can have an internal structure. In practice, this allows for the chance of storing additional data, whose semantic description is not essential, without complicating the ontology. IT is possible to trace the root of this in the
 \paragraph{Apache TinkerPop}
@@ -57,45 +57,119 @@ KITT scripting language is a way for the end user to inject in the system a whol
 \begin{itemize}
   \item Domain concepts and relationships are structured in a taxonomy and so are disjointed
   \item Relationships can be established between concepts or between instances
-  \item Relationships between concepts and instances are only the instantiation ones
+  \item Relationships between concepts and instances are only the basic ones connecting an instance to its parent concept
   \item Instances have to be instantiated from the defined model.
 \end{itemize}
-Thanks to these assumptions the scripting language can define a full model in a human readable text format. This format separates the on
-tology definition from the instances definition.
+Thanks to these assumptions the scripting language can define a full model in a human readable text format. Under these assumptions the model is powerful enough to create a digital twin of the building. A KITT script is divided into three main parts
+\begin{itemize}
+  \item Concepts definition
+  \item Model instantiation
+  \item Ruleset definition.
+\end{itemize}
+In the concept level definition a series of concepts, that is the vocabulary of the model, are defined as shown in \autoref{lst:kitt_concept_def}
+\begin{lstlisting}[label={lst:kitt_concept_def}, caption={KITT script for domain definition}, breaklines=true]
+[Init]
+[Dimensions]
+Point
+Location
+Equipment
+Property
+[InstanceReferenceTypes]
+hasLocation = in
+hasPoint
+isFedBy
+hasProperty
+[Concepts]
+Location
+  Room
+Equipment
+  HVAC
+    AHU
+Point
+  Sensor
+    Flow_Sensor
+      Supply_Air_Flow_Sensor
+    Temperature_Sensor
+Property
+  Temperature
+\end{lstlisting}
+the script start with the definition of the main dimensions of the ontology. In \autoref{lst:kitt_concept_def} the definition of Point, Location, Equipment and Measurement suggests that the ontology used is going to be Brick. The \verb|[InstancereferenceTypes]| section introduce which possible relationships are going to be instantiated later, shorthands can be defined so that defining instances, in the appropriate section of the script, becomes easier. The \verb|[Concept]| tag start the part of the script where the taxonomy of the ontology is defined. The tabulation at the start of each line has a semantic meaning and defines the hierarchy of the concepts; An indent means that the following concepts are sub-concepts of the upper one, while concepts on the same line represent disjointed classes. In it is represented the scripting module that correspond to the declaration of the ground truth of the knowledge base, that in the case of a smart building that means defining the architecture, the spatial relationships between locations and the various equipment and points distributed in the buildings.
+\begin{lstlisting}[label={lst:kitt_instance_definition}, caption={Definition of instances}, breaklines=true]
+[Instances]
+Room1708 a Room ``the room''
+  TS1708 a Temperature_Sensor hasPoint Room1708 X{"type": "Point", "coordinates": [32.76473, 35.01616] }X
+AHU1 a AHU isFedBy Room
+  SAF_U1 a Supply_Air_Flow_Sensor hasPoint AHU1
+...
+\end{lstlisting}
+the instantiation is done through the keyword \verb|a|, that specify the concept an isntance belongs to.
+The next section in a KITT script is the \verb|[Reasoning]| one, whose goal is to define and execute the ruleset that infer the physics model of the building. \autoref{lst:kitt_reasoning_definition} defines the syntax in the script, while the syntax and the meaning of the rules is described in \autoref{subsec:reasoning_api}.
+\begin{lstlisting}[label={lst:kitt_reasoning_definition}, caption={Definition of reasoning ruleset}, breaklines=true]
+[Reasoning]
+Room(x)->Temperature(y)&hasProperty(x,y)
+...
+\end{lstlisting}
+When fed to the KITT API the KITT script goes through a parser that build the model and execute the reasoning. At the time of model creation, the parser itself automatically compute subsumption relationships for the instance such that every instance is directly bound to its parent class and to other ancestor classes.
 
-\subsection{Reasoning API}
-Whenever reasoning is involved, it is intended as the capability of inferring new knowledge about the system given previous asserted facts and an ontology. The main duty of the reasoning engine in this project is that of applying knowledge about general physics to the given model. The second one is it's capacity of answering complex query that the KITT API level can't natively handle. Therefore KITT reasoning language describe an union of production rules languages like SWRL and query languages like SPARQL.
+
+\subsection{Reasoning API}\label{subsec:reasoning_api}
+Whenever reasoning is involved, it is intended as the capability of inferring new knowledge about the system given previous asserted facts and an ontology. The main duty of the reasoning engine in this project is that of applying knowledge about general physics to the given model. The second one is it's capacity of answering complex query that the KITT API level can't natively handle. Therefore KITT reasoning language describe an union of production rules languages like SWRL\cite{swrl_reccomendation} and query languages like SPARQL\cite{sparql_reccomendation}. On top of that ad-hoc functions have been added so that such language could be the most straightforward for the operations involved in this project.
 \paragraph{KITT reasoning language}
-The reasoning language developed borrowed syntax from classic rule languages like SWRL, yet it needed to expose methods useful to explicit complex query and path traversal. A KITT rule is expressed as a form of entailment \[body\Rightarrow head\] where $body$ and $head$ are both expressed in conjunctive form, so that a rule assume the form \[A_1\land\ldots\land A_n\Rightarrow B_1\land\ldots\land B_m\] where $A_i$ and $B_j$ are either statements about, or relationships between, facts (see \autoref{eq:rule_facts_only}).
+The reasoning language developed borrowed syntax from classic rule languages like SWRL, yet it needed to expose methods useful to explicit complex query and path traversal. A KITT rule is expressed as a form of entailment \[body\implies head\] where $body$ and $head$ are both expressed in conjunctive form, so that a rule assume the form \[A_1\land\ldots\land A_n\implies B_1\land\ldots\land B_m\] where $A_i$ and $B_j$ are either statements about, or relationships between, facts (see \autoref{eq:rule_facts_only}).
 \begin{equation}
 \label{eq:rule_facts_only}
-Room0408\land Temp0408\Rightarrow hasProperty(Room0408, Temp0408)
+Room0408\land Temp0408\implies hasProperty(Room0408, Temp0408)
 \end{equation}
 That means that wether the condition in the body holds, the condition on the left must hold too. This characteristic, typical of production rules, is used to entail new knowledge according to domain expertise. When coupled with the concept of variable, rules becomes a powerful tool to enforce knowledge on a knowledge base. Thanks to variable, rules can be wrote refering to concepts, that in turn are set of instances; this allows for the encoding of domain expertise into procedural rules. For example, a human expert would not say something as in \ref{eq:rule_facts_multiple}
 \begin{equation}
 \label{eq:rule_facts_multiple}
 \begin{gathered}
-Room0408\Rightarrow hasProperty(Room0408, Temp0408)\land Temp0408\\
-Room709\Rightarrow hasProperty(Room709, Temp709)\land Temp709\\
+Room0408\implies hasProperty(Room0408, Temp0408)\land Temp0408\\
+Room709\implies hasProperty(Room709, Temp709)\land Temp709\\
 \dots
 \end{gathered}
 \end{equation}
 but would instead say ``Every room has an internal temperature''; from this sentence it emerge that there exist a concept of room, a concept of internal temperature and that this concepts are related. Introducing variables it becomes a rule as in \autoref{eq:simple_prod_rule}
 \begin{equation}
 \label{eq:simple_prod_rule}
-Room(x)\Rightarrow Temperature(y)\land hasProperty(x,y)
+Room(x)\implies Temperature(y)\land hasProperty(x,y)
 \end{equation}
-where $x$ and $y$ are variable that can be bound to any given facts in the instance model; if  the variables appears on the right-hand side of the rule and can't be bound to any given fact in the knowledge base, they are created so that the entailment is satisfied. It is to note that this behaviour is usually prohibithed by existing reasoners due to the fact that it remove the decidability property from the ruleset.
-That is, if in a production ruleset a variable appears in the right-hand side of a rule whilst not appearing in the left-hand side of
+where $x$ and $y$ are variables that can be bound to any given fact in the instance model; if the variables appears on the right-hand side of the rule and can't be bound to any given fact in the knowledge base, they are created so that the entailment is satisfied.
+The second fundamental function of the reasoner is its capability of answring complex queries. Complex queries are questions whose answers are not imeediately retrievable from the knowledge base through simple relationships. Complex queries are, in contrast with production rules, usually focused on retrieving information about well known facts instead of general knowledge thus requiring for a way of mixing in the same rule both named facts and variables. A good example of this sounds like ``Which are the temperature sensors of the rooms fed by AHU1''; translating it like explained just above
+\begin{equation}
+AHU(a)\land Room(r)\land isFedBy(r, a)\land TempSensor(t)\land hasPoint(r,t)
+\end{equation}
+lead to an erroneous interpretation of the query as this would fetch ``every temperature sensor of the rooms that are fed by either one of all the AHUs''
+\begin{equation}
+AHU(AHU1)\land Room(r)\land isFedBy(r, AHU1)\land TempSensor(t)\land hasPoint(r,t)
+\end{equation}
+is the right way to go and it has been implemented in the reasoner as \begin{equation}
+AHU(a, \# AHU1)\land Room(r)\land isFedBy(r, a)\land TempSensor(t)\land hasPoint(r,t)
+\end{equation}
+where $AHU(a, \# AHU1)$ binds the variable $a$ to the named individual $AHU1$.
 A less traditional ways to use this kind of rules is for the evaluation of property chains. Property chains, in the context of physical modelling and diagnosis represents important knowledge (see \autoref{sec:potential_causes}) and the ability to traverse them is essential for reasoning in such environments. An ad-hoc operator has been introduced so that such traversal are possible
 \begin{verbatim}
  _CHAIN({R(dir),R(dir),...}, start, end)[condition]
 \end{verbatim}
-where \verb|R| is a relationship in the ontology, \verb|dir| $\in$ \verb|[^,v]| tells wether the relationship to chase is an incoming or outcoming one and when are combined as in \verb|{R(dir)...}| they specify a pattern to match; \verb|start| identify a known variable in the head of a rule and so is \verb|end|, respectively identifying the first and last instances of the chain, \verb|condition| is either a number specifying the max number of pattern matching to perform before stopping, a condition the \verb|end| variable needs to uphold in order to stop the recursion or both. Such function is visible in \autoref{fig:property_chain_rule}. In the case that a cycle is identified during the traversal it is natively dealt with using standard cycles detection algorithms.
+where \verb|R| is a relationship in the ontology, \verb|dir| $\in$ \verb|[^,v]| tells wether the relationship to chase is an incoming or out-coming one and when are combined as in \verb|{R(dir)...}| they specify a pattern to match; \verb|start| identify a known variable in the head of a rule and so is \verb|end|, respectively identifying the first and last instances of the chain, \verb|condition| is either a number specifying the maximum number of pattern matching to perform before stopping, a condition the \verb|end| variable needs to uphold in order to stop the recursion or both. Such function is visible in \autoref{fig:property_chain_rule}. In the case that a cycle is identified during the traversal it is natively dealt with using standard cycles detection algorithms.
 \begin{figure}
   \centering
   \includegraphics[width=.8\textwidth]{property_chain_rule.pdf}
   \caption{Property chain in a rule}
   \label{fig:property_chain_rule}
 \end{figure}
+\paragraph{Reasoner known limitations}
+It is important to note that enabling the reasoner to perform update/modification of a knowledge base is bound to end up in the domain of undecidable languages. This is easily demonstrated by a counterexample like
+\begin{equation}
+  A(x)\implies A(y)
+\end{equation}
+or again
+\begin{equation}
+  \begin{gathered}
+    A(q)\implies B(r) \\
+    B(s)\implies A(t)
+  \end{gathered}
+\end{equation}
+and whatever ruleset such that there's some kind of cicles involved in the resolutions of such rules that would start to be fired endlessly and never comes to an halt. Such problem is well known in literature and needs to be evaluated on a case-by-case basis. It boils down to balancing whether is better to achieve high expressivness or remain in the domain of decidability. In this project, given the requirements in \autoref{sec:requirements} has been deemed more appropriate the first than the latter and this follows from the main purpose of the reasoner, that is to fill incomplete knowledge. Another limitation of the current reasoner is represented by the method used for executing the ruleset, that is the most naive possible and is a simple execution based on declaration order.
 
+\section{Towards conversations}\label{sec:conversational_interface}
