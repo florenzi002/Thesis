@@ -20,6 +20,13 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{listings}
+\usepackage{adjustbox}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\usepackage{pgfplotstable}
+
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}l@{}}#2\end{tabular}}
 
 \begin{document}
 \input{chapters/titlepage}
@@ -32,5 +39,6 @@
 \input{chapters/chapter3}
 \input{chapters/chapter4}
 \input{chapters/chapter5}
+\input{chapters/chapter6}
 \printbibliography
 \end{document}
