@@ -200,10 +200,18 @@ The main idea behind the approach is that natural language carries a meaning and
   \item concepts, that are the subjects, predicates and objects (thus can be searched for in the ontology)
   \item intents, that specify some kind of processing executed on the subjects and objects.
 \end{itemize}
-This high-level idea has been implemented thanks to the IBM Watson Conversation services and led to the development of a succesful demo application. More details will be presented in Chapter 5.
-% This interaction has been developed, as a proof of concept, using IBM Watson Conversation Service that provide a developing framework for the development of Personal Digital Assistants (PDA). The digital assistant, available through a web service on a mobile friendly web page, was able to distinguish and answer two kind of questions involving complex queries. The demo PDA can distinguish between two kind of intents
-%\begin{itemize}
-%  \item ``What is'', the simplest intent that has been given the meaning return the object of the query
-%  \item ``How many'' that involved the counting of a query result objects.
-%\end{itemize}
-%The concepts involved where locations, assets and events, so that
+This high-level idea has been implemented thanks to the IBM Watson Conversation services and led to the development of a succesful demo application. A proof of concept PDA, named KITTbot, has been developed using IBM Watson Conversation Service. IBM Watson Conversation is a service that provides a developing framework for the development of Personal Digital Assistants (PDA). The developed digital assistant, available through a web service on a mobile friendly web page, was able to distinguish and answer two kind of questions involving complex queries. The demo PDA could distinguish between two kind of intents
+\begin{itemize}
+ \item ``What is'', the simplest intent that has been given the meaning return the object of the query
+ \item ``How many'' that involved the counting of a query result objects.
+\end{itemize}
+Intents recognition is a task that is reserved exclusively to Watson Conversation component that, through cutting edge machine learning technologies, can recognize and extract intents and objects from a sentence.
+The concepts extracted from the sentence are sent towards KITT be processed according to the semantic so that a domain specific context can be assigned to each of them.
+Once that the meaning (semantic) of the concepts in knwon, relevant instances can be extracted from the knowledge base. The set of instances is sent back, processed according to the intent and then the answer can be sent back to the user. The answer is still built and frowarded to the user through Watson Conversation Services.
+\autoref{fig:kitt_bot} shows an example of a complex interaction that is correctly handled by the approach.
+\begin{figure}
+  \centering
+  \includegraphics[width=.5\textwidth]{KITTbot.pdf}
+  \caption{Complex query involving semantic concepts and relationship}
+  \label{fig:kitt_bot}
+\end{figure}
